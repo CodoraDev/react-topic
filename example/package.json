@@ -18,13 +18,14 @@
     "@types/react": "file:../node_modules/@types/react",
     "@types/react-dom": "file:../node_modules/@types/react-dom",
     "react": "file:../node_modules/react",
+    "react-codora-topic": "file:..",
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "file:../node_modules/react-scripts",
-    "typescript": "file:../node_modules/typescript",
-    "react-codora-topic": "file:.."
+    "typescript": "file:../node_modules/typescript"
   },
   "devDependencies": {
-    "@babel/plugin-syntax-object-rest-spread": "^7.8.3"
+    "@babel/plugin-syntax-object-rest-spread": "^7.8.3",
+    "@faker-js/faker": "^6.0.0-alpha.3"
   },
   "eslintConfig": {
     "extends": "react-app"
