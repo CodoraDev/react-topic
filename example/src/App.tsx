@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import { Topic, useTopic } from 'react-codora-topic'
 import 'react-codora-topic/dist/index.css'
@@ -16,7 +16,7 @@ type Post = {
 }
 
 const PublishTopic = () => {
-  const { publish: publishUser } = useTopic<User>('user')
+  const { publish: publishUser, subscribe } = useTopic<User>('user')
   const { publish: publishPost } = useTopic<Post>('post')
 
   const handleAddUser = () => {
@@ -40,6 +40,15 @@ const PublishTopic = () => {
     }
     publishPost(rngId, 'created', rngPost)
   }
+
+  useEffect(() => {
+    const unSub = subscribe((event) => {
+      console.log(event)
+    }, 'user')
+    return () => {
+      unSub()
+    }
+  }, [])
   return (
     <div>
       <button onClick={handleAddUser}>Add random User</button>

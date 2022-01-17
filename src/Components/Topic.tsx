@@ -1,6 +1,7 @@
+import { timeStamp } from 'console'
 import React, { createContext, useState } from 'react'
 import { v4 as uuid } from 'uuid'
-import { Dictionary } from '../lib/util'
+import { Dictionary, forEachKey } from '../lib/util'
 
 export type TopicProps = {
   children: JSX.Element
@@ -8,21 +9,33 @@ export type TopicProps = {
 }
 
 export const Topic = ({ children }: TopicProps) => {
-  const [subscriptions, setSubscriptions] = useState<Subscriptions>({})
-  //   const [events, setEvents] = useState<EventRegistry>({})
+  const [subscriptions, setSubscriptions] = useState<SubscriptionRegistry>({})
+  const [events, setEvents] = useState<EventRegistry>({})
   const [topics, setTopics] = useState<TopicRegistry>({})
 
-  const subscribe: Subscribe = <T,>(onSubscribe: OnSubscribe<T>) => {
-    const id = uuid()
+  const subscribe: Subscribe = <T,>(
+    onSubscribe: OnSubscribe<T>,
+    topic: string
+  ) => {
+    const subscription: Subscription<T> = {
+      id: uuid(),
+      topic: topic,
+      head: events[topic] ? events[topic].length : 0,
+      onSubscribe: onSubscribe
+    }
 
-    setSubscriptions((stream) => {
-      subscriptions[id] = onSubscribe
-      return stream
+    setSubscriptions((subscriptions) => {
+      if (subscriptions[topic] == undefined) {
+        subscriptions[topic] = {}
+      }
+      subscriptions[topic][subscription.id] = subscription
+      console.log(subscriptions)
+      return subscriptions
     })
 
     const unsubscribe: UnSubScribe = () =>
       setSubscriptions((stream) => {
-        delete stream[id]
+        delete stream[subscription.id]
         return stream
       })
     return unsubscribe
@@ -37,19 +50,44 @@ export const Topic = ({ children }: TopicProps) => {
       topics[publishEvent.topic.topic][publishEvent.topic.id] =
         publishEvent.topic
       console.log(topics)
+
+      setEvents((events) => {
+        if (events[publishEvent.topic.topic] == undefined) {
+          events[publishEvent.topic.topic] = []
+        }
+
+        const event: Event<T> = {
+          eventId: events[publishEvent.topic.topic].length,
+          topic: publishEvent.topic,
+          timestamp: new Date()
+        }
+        events[publishEvent.topic.topic] = [
+          ...events[publishEvent.topic.topic],
+          event
+        ]
+        console.log(events)
+
+        if (subscriptions[publishEvent.topic.topic] == undefined) {
+          subscriptions[publishEvent.topic.topic] = {}
+        }
+        forEachKey(
+          subscriptions[publishEvent.topic.topic],
+          (subscription: Subscription<T>) => {
+            subscription.onSubscribe(event)
+            subscription.head = events[publishEvent.topic.topic].length
+            setSubscriptions((subscriptions) => {
+              subscriptions[publishEvent.topic.topic][subscription.id] =
+                subscription
+              return subscriptions
+            })
+          }
+        )
+
+        return events
+      })
+
       return topics
     })
-    // setEvents((events) => {
-    //   const event: Event<any> = {
-    //     id: events.length,
-    //     timestamp: new Date(),
-    //     ...publishEvent
-    //   }
-    //   forEachKey(subscriptions, (subscription) => {
-    //     subscription(event)
-    //   })
-    //   return [...events, event]
-    // })
   }
 
   const provider = {
@@ -92,6 +130,14 @@ export const Topic = ({ children }: TopicProps) => {
 
 export type TopicRegistry = Dictionary<Dictionary<Topic<any>>>
 export type EventRegistry = Dictionary<Event<any>[]>
+export type SubscriptionRegistry = Dictionary<Dictionary<Subscription<any>>>
+
+export type Subscription<T> = {
+  id: string
+  topic: string
+  head: number
+  onSubscribe: OnSubscribe<T>
+}
 
 export type Topic<T> = {
   id: string
@@ -109,9 +155,10 @@ export type PublishEvent<T> = {
   topic: Topic<T>
 }
 
-export type Subscriptions = Dictionary<OnSubscribe<any>>
-
-export type Subscribe = <T>(onSubscribe: OnSubscribe<T>) => UnSubScribe
+export type Subscribe = <T>(
+  onSubscribe: OnSubscribe<T>,
+  topic: string
+) => UnSubScribe
 
 export const nullSubscribe: Subscribe = () => nullUnSubscribe
 
