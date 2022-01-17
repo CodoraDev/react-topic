@@ -1,8 +1,8 @@
 import { useContext } from 'react'
-import { Topic, TopicContext } from '..'
+import { OnSubscribe, Topic, TopicContext } from '..'
 
 export const useTopic = <T,>(topic: string) => {
-  const { publish: pub, subscribe } = useContext(TopicContext)
+  const { publish: pub, subscribe: sub } = useContext(TopicContext)
 
   const publish = (id: string, event: string, data: T) => {
     const publishTopic: Topic<T> = {
@@ -12,5 +12,10 @@ export const useTopic = <T,>(topic: string) => {
     }
     pub({ event: event, topic: publishTopic })
   }
+
+  const subscribe = (onSubscribe: OnSubscribe<T>) => {
+    return sub(onSubscribe, topic)
+  }
+
   return { publish, subscribe }
 }

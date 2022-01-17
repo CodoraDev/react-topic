@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 
-import { Topic, useTopic } from 'react-codora-topic'
+import { Event, Topic, useTopic } from 'react-codora-topic'
 import 'react-codora-topic/dist/index.css'
 const faker = require('@faker-js/faker')
 
@@ -15,8 +15,32 @@ type Post = {
   post: string
 }
 
-const PublishTopic = () => {
+const SubscribeTopic = () => {
   const { publish: publishUser, subscribe } = useTopic<User>('user')
+  const [users, setUsers] = useState<User[]>([])
+  const [event, setEvent] = useState<Event<User>>()
+  useEffect(() => {
+    const unSub = subscribe((users, event) => {
+      setUsers(users)
+      setEvent(event)
+    })
+    return () => {
+      unSub()
+    }
+  }, [])
+  return (
+    <div>
+      <h2>Latest User Event:</h2>
+      <pre>{JSON.stringify(event, null, 2)}</pre>
+
+      <h2>Current User Collection:</h2>
+      <pre>{JSON.stringify(users, null, 2)}</pre>
+    </div>
+  )
+}
+
+const PublishTopic = () => {
+  const { publish: publishUser } = useTopic<User>('user')
   const { publish: publishPost } = useTopic<Post>('post')
 
   const handleAddUser = () => {
@@ -41,14 +65,6 @@ const PublishTopic = () => {
     publishPost(rngId, 'created', rngPost)
   }
 
-  useEffect(() => {
-    const unSub = subscribe((event) => {
-      console.log(event)
-    }, 'user')
-    return () => {
-      unSub()
-    }
-  }, [])
   return (
     <div>
       <button onClick={handleAddUser}>Add random User</button>
@@ -59,7 +75,10 @@ const PublishTopic = () => {
 const App = () => {
   return (
     <Topic>
-      <PublishTopic />
+      <>
+        <PublishTopic />
+        <SubscribeTopic />
+      </>
     </Topic>
   )
 }

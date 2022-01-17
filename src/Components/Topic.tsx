@@ -1,7 +1,6 @@
-import { timeStamp } from 'console'
 import React, { createContext, useState } from 'react'
 import { v4 as uuid } from 'uuid'
-import { Dictionary, forEachKey } from '../lib/util'
+import { Dictionary, forEachKey, mapEachKey } from '../lib/util'
 
 export type TopicProps = {
   children: JSX.Element
@@ -29,7 +28,6 @@ export const Topic = ({ children }: TopicProps) => {
         subscriptions[topic] = {}
       }
       subscriptions[topic][subscription.id] = subscription
-      console.log(subscriptions)
       return subscriptions
     })
 
@@ -49,7 +47,6 @@ export const Topic = ({ children }: TopicProps) => {
       }
       topics[publishEvent.topic.topic][publishEvent.topic.id] =
         publishEvent.topic
-      console.log(topics)
 
       setEvents((events) => {
         if (events[publishEvent.topic.topic] == undefined) {
@@ -65,7 +62,6 @@ export const Topic = ({ children }: TopicProps) => {
           ...events[publishEvent.topic.topic],
           event
         ]
-        console.log(events)
 
         if (subscriptions[publishEvent.topic.topic] == undefined) {
           subscriptions[publishEvent.topic.topic] = {}
@@ -73,7 +69,11 @@ export const Topic = ({ children }: TopicProps) => {
         forEachKey(
           subscriptions[publishEvent.topic.topic],
           (subscription: Subscription<T>) => {
-            subscription.onSubscribe(event)
+            const collection: T[] = mapEachKey(
+              topics[publishEvent.topic.topic],
+              (item: Topic<T>) => item.data
+            )
+            subscription.onSubscribe(collection, event)
             subscription.head = events[publishEvent.topic.topic].length
             setSubscriptions((subscriptions) => {
               subscriptions[publishEvent.topic.topic][subscription.id] =
@@ -110,8 +110,8 @@ export const Topic = ({ children }: TopicProps) => {
               </tr>
             </thead>
             <tbody>
-              {events
-                .sort((a, b) => b.id - a.id)
+              {mapEachKey(events, (event) => event)
+                .sort((a, b) => b. - a.id)
                 .map((event) => (
                   <tr key={event.id}>
                     <td>{event.id}</td>
@@ -162,7 +162,7 @@ export type Subscribe = <T>(
 
 export const nullSubscribe: Subscribe = () => nullUnSubscribe
 
-export type OnSubscribe<T> = (event: Event<T>) => void
+export type OnSubscribe<T> = (collection: T[], event: Event<T>) => void
 export const nullOnSubscribe = () => {}
 
 export type UnSubScribe = () => void
