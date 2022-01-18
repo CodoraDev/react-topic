@@ -1,10 +1,10 @@
 {
-  "name": "react-codora-topic",
+  "name": "@codoradev/react-topic",
   "version": "1.0.0",
-  "description": "React component and hook to publish a topic and subscribe to a topic. ",
+  "description": "React component and hook to publish and subscribe to topics.",
   "author": "JarrydMartin",
   "license": "MIT",
-  "repository": "JarrydMartin/react-codora-topic",
+  "repository": "CodoraDev/react-topic",
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
