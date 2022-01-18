@@ -1,10 +1,13 @@
 {
-  "name": "@codoradev/react-topic",
+  "name": "@codora/react-topic",
   "version": "1.0.0",
   "description": "React component and hook to publish and subscribe to topics.",
   "author": "JarrydMartin",
   "license": "MIT",
-  "repository": "CodoraDev/react-topic",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CodoraDev/react-topic.git"
+  },
   "main": "dist/index.js",
   "module": "dist/index.modern.js",
   "source": "src/index.ts",
@@ -64,5 +67,15 @@
   ],
   "dependencies": {
     "uuid": "^8.3.2"
-  }
+  },
+  "bugs": {
+    "url": "https://github.com/CodoraDev/react-topic/issues"
+  },
+  "homepage": "https://github.com/CodoraDev/react-topic#readme",
+  "directories": {
+    "example": "example"
+  },
+  "keywords": [
+    "topic"
+  ]
 }

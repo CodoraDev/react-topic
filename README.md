@@ -4,17 +4,17 @@
 *A react hook to publish and subscribe to a topic from any component.*
 
 ![version](https://img.shields.io/npm/v/react-codora-topic)
-![npm downloads](https://img.shields.io/npm/dm/react-codora-topic)
+![npm downloads](https://img.shields.io/npm/dm/@codora/react-topic)
 
 
 [Report Bug](https://github.com/CodoraDev/react-topic/issues/new) - 
 [Request Feature](https://github.com/CodoraDev/react-topic/issues/new)
  
 ##  ✨ Install
-`npm install --save @codoradev/react-topic` 
+`npm install --save @codora/react-topic` 
 
 ## 👉 Import
-`import {Topic, useTopic} from "@codoradev/react-topic";`
+`import {Topic, useTopic} from "@codora/react-topic";`
 
 ##  🚀 Demo
 Coming Soon...
@@ -22,7 +22,7 @@ Coming Soon...
 ## 🔬 Use Topic
 Add the `<Topic>` context any where in your app. Add it near the root if you want to use topics for your whole app. 
 ```tsx
-import {Topic} from "@codoradev/react-topic";
+import {Topic} from "@codora/react-topic";
 
 const App = () => {
   return (
@@ -37,7 +37,7 @@ You will then have access to `useTopic`. It takes one argument, which will be th
 
 `useTopic` will return two functions: `publish` and `subscribe`
 ```tsx
-import {useTopic} from "@codoradev/react-topic";
+import {useTopic} from "@codora/react-topic";
 
 type User = {
     name
